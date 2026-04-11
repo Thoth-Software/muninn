@@ -1,0 +1,22 @@
+[package]
+name = "muninn-cli"
+description = "Command-line interface for the Muninn filesystem scanner"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "muninn"
+path = "src/main.rs"
+
+[dependencies]
+muninn-core = { path = "../muninn-core" }
+clap.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[lints]
+workspace = true

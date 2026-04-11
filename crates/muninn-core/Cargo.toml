@@ -1,0 +1,57 @@
+[package]
+name = "muninn-core"
+description = "Filesystem metadata scanner for corpus analysis"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[features]
+default = ["pdf", "ooxml", "ole", "email", "image-meta", "text-analysis"]
+
+# Format families — each gates its parser module and dependencies
+pdf = ["dep:lopdf", "dep:pdf-extract"]
+ooxml = ["dep:zip", "dep:quick-xml"]
+ole = ["dep:cfb"]
+email = ["dep:mailparse"]
+image-meta = ["dep:kamadak-exif", "dep:imagesize"]
+
+# Analysis features
+text-analysis = ["dep:aho-corasick"]
+lang-detect = ["dep:whichlang"]
+
+[dependencies]
+# Always required
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+walkdir.workspace = true
+filetime.workspace = true
+mime_guess.workspace = true
+infer.workspace = true
+globset.workspace = true
+regex.workspace = true
+rayon.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+chardetng.workspace = true
+encoding_rs.workspace = true
+
+# Feature-gated
+lopdf = { workspace = true, optional = true }
+pdf-extract = { workspace = true, optional = true }
+zip = { workspace = true, optional = true }
+quick-xml = { workspace = true, optional = true }
+cfb = { workspace = true, optional = true }
+mailparse = { workspace = true, optional = true }
+kamadak-exif = { workspace = true, optional = true }
+imagesize = { workspace = true, optional = true }
+aho-corasick = { workspace = true, optional = true }
+whichlang = { workspace = true, optional = true }
+
+[dev-dependencies]
+tempfile.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

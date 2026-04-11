@@ -2,6 +2,11 @@
 
 Filesystem metadata scanner for corpus analysis. Part of the Cake Intelligence platform.
 
+*Ravens, Hugin and Munin, of Thought and Memory*  
+*Wing the wide world each day:*  
+*I tremble for Thought, lest he come not again,*  
+*Yet for Memory more I fear.*  
+
 ## Architecture
 
 Muninn walks directory trees, classifies files by inspection depth (deep / medium / shallow / excluded), dispatches to format-specific parsers, and produces a structured JSON report.

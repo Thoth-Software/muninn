@@ -57,3 +57,22 @@ serde_json.workspace = true
 
 [lints]
 workspace = true
+
+# Feature-gated parser deps are declared here but their modules are still
+# stubs (see CLAUDE.md "Known Defects"). cargo-machete cannot see past the
+# cfg gates, so we explicitly ignore them until the parser bodies land.
+[package.metadata.cargo-machete]
+ignored = [
+    "aho-corasick",
+    "cfb",
+    "chardetng",
+    "encoding_rs",
+    "imagesize",
+    "kamadak-exif",
+    "lopdf",
+    "mailparse",
+    "pdf-extract",
+    "quick-xml",
+    "whichlang",
+    "zip",
+]

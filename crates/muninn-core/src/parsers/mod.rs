@@ -24,8 +24,8 @@ pub mod ooxml;
 #[cfg(feature = "ole")]
 pub mod ole;
 
-pub mod plain_text;
 pub mod html;
+pub mod plain_text;
 
 #[cfg(feature = "email")]
 pub mod email;
@@ -34,8 +34,8 @@ pub mod email;
 pub mod image;
 
 pub mod archive;
-pub mod rtf;
 pub mod opendocument;
+pub mod rtf;
 
 /// Trait implemented by every format-specific parser.
 ///

@@ -16,6 +16,10 @@ pub struct XrefExtractor {
 
 impl XrefExtractor {
     /// Build from default + custom patterns.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if any regex in `custom_patterns` fails to compile.
     pub fn new(custom_patterns: &[String]) -> crate::Result<Self> {
         let mut all_patterns: Vec<&str> = vec![
             // ISO standards
@@ -32,14 +36,20 @@ impl XrefExtractor {
             r"[Pp]er\s+[A-Z][\w.\-]+\s+\d+",
         ];
 
-        let custom_strs: Vec<&str> = custom_patterns.iter().map(|s| s.as_str()).collect();
+        let custom_strs: Vec<&str> = custom_patterns
+            .iter()
+            .map(std::string::String::as_str)
+            .collect();
         all_patterns.extend(custom_strs);
 
         let patterns = RegexSet::new(&all_patterns)?;
-        Ok(Self { _patterns: patterns })
+        Ok(Self {
+            _patterns: patterns,
+        })
     }
 
     /// Extract cross-references from a block of text.
+    #[must_use]
     pub fn extract(&self, _text: &str) -> Vec<CrossReference> {
         // TODO: Match _patterns against text
         // TODO: For each match, classify as Standard / InternalId / External / Unknown

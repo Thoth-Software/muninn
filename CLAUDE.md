@@ -19,22 +19,13 @@ After completing any task that changes architecture, module boundaries, conventi
 
 ## Quality Gates
 
-Run in this order. Every gate must pass before presenting changes.
+Run `make all` before presenting changes. It runs every hard gate in order and fails fast:
 
 ```bash
-cargo fmt --all --check                                        # Formatting. Hard gate.
-cargo clippy --workspace --all-targets --all-features -- -D warnings  # Lints. Hard gate.
-cargo test --workspace --all-targets --all-features            # Tests. Hard gate.
+make all   # fmt-check → lint → test → deny → machete
 ```
 
-For a quick local check when iterating, `cargo check --workspace --all-targets --all-features` is enough to catch type errors without a full build.
-
-When these tools are set up (they are not yet), run them before merge:
-
-```bash
-cargo deny check        # License + advisory audit
-cargo machete           # Unused dependencies
-```
+The individual targets are also available (`make fmt-check`, `make lint`, `make test`, `make deny`, `make machete`, `make audit`). For a quick local check when iterating, `make check` runs `cargo check --workspace --all-targets --all-features` to catch type errors without a full build.
 
 ---
 
@@ -154,7 +145,6 @@ Functions taking `&Vec<T>` or `&String` are a lint failure; use `&[T]` and `&str
 
 If your task touches any of these, flag it to the user rather than silently resolving or ignoring it.
 
-- **`hostname` crate missing** — `scanner.rs` calls `hostname::get()` but the dependency is not in `Cargo.toml`. Won't compile until added.
 - **`dirs` crate missing** — `config.rs` falls back to `cwd` instead of Desktop. TODO comment in code.
 - **HTML parser crate missing** — no HTML parsing dependency exists. `html.rs` can't do anything without one.
 - **RTF parser crate missing** — same situation as HTML.

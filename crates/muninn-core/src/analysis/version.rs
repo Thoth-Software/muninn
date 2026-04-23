@@ -13,6 +13,7 @@ pub struct VersionDetection {
 }
 
 /// Detect version info from a filename stem.
+#[must_use]
 pub fn detect_version(filename_stem: &str) -> VersionDetection {
     // Patterns from the spec, tried in order of specificity.
     let patterns: &[(&str, &str)] = &[
@@ -42,5 +43,8 @@ pub fn detect_version(filename_stem: &str) -> VersionDetection {
         }
     }
 
-    VersionDetection { filename_version: None, version_family: None }
+    VersionDetection {
+        filename_version: None,
+        version_family: None,
+    }
 }

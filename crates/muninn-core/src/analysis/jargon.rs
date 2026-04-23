@@ -7,6 +7,7 @@
 /// Extract candidate jargon terms from document text.
 ///
 /// Returns terms sorted by TF-IDF score descending.
+#[must_use]
 pub fn extract_jargon_terms(_text: &str) -> Vec<String> {
     // TODO: Tokenize text, compute term frequencies
     // TODO: Load baked-in background corpus (top 50k English words)

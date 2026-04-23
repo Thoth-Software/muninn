@@ -2,7 +2,7 @@
 //!
 //! These structs serialize directly to the JSON schema defined in
 //! `muninn-output-schema.json`. Field names use `#[serde(rename)]` where
-//! the JSON uses snake_case that differs from Rust conventions.
+//! the JSON uses `snake_case` that differs from Rust conventions.
 
 use std::collections::HashMap;
 

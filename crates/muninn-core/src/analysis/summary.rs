@@ -8,11 +8,11 @@ use std::collections::HashMap;
 use chrono::Utc;
 
 use crate::output::{
-    CorpusSummary, DateModifiedDistribution, DocumentMetadata, ScannedVsDigital,
-    TextExtractability,
+    CorpusSummary, DateModifiedDistribution, DocumentMetadata, ScannedVsDigital, TextExtractability,
 };
 
 /// Aggregate per-document metadata into a corpus summary.
+#[must_use]
 pub fn compute_summary(documents: &[DocumentMetadata]) -> CorpusSummary {
     let total_documents = documents.len() as u64;
     let total_size_bytes: u64 = documents.iter().map(|d| d.file_size_bytes).sum();
@@ -20,7 +20,9 @@ pub fn compute_summary(documents: &[DocumentMetadata]) -> CorpusSummary {
     // Format distribution
     let mut format_distribution: HashMap<String, u64> = HashMap::new();
     for doc in documents {
-        *format_distribution.entry(doc.extension.clone()).or_default() += 1;
+        *format_distribution
+            .entry(doc.extension.clone())
+            .or_default() += 1;
     }
 
     // Language distribution
@@ -30,7 +32,11 @@ pub fn compute_summary(documents: &[DocumentMetadata]) -> CorpusSummary {
             *lang_dist.entry(lang.clone()).or_default() += 1;
         }
     }
-    let language_distribution = if lang_dist.is_empty() { None } else { Some(lang_dist) };
+    let language_distribution = if lang_dist.is_empty() {
+        None
+    } else {
+        Some(lang_dist)
+    };
 
     // Encoding distribution
     let mut enc_dist: HashMap<String, u64> = HashMap::new();
@@ -39,13 +45,17 @@ pub fn compute_summary(documents: &[DocumentMetadata]) -> CorpusSummary {
             *enc_dist.entry(enc.clone()).or_default() += 1;
         }
     }
-    let encoding_distribution = if enc_dist.is_empty() { None } else { Some(enc_dist) };
+    let encoding_distribution = if enc_dist.is_empty() {
+        None
+    } else {
+        Some(enc_dist)
+    };
 
     // Scanned vs digital (PDFs only)
     let scanned_vs_digital = compute_scanned_vs_digital(documents);
 
     // Date modified distribution
-    let date_modified_distribution = compute_date_distribution(documents);
+    let date_modified_distribution = Some(compute_date_distribution(documents));
 
     CorpusSummary {
         total_documents,
@@ -78,13 +88,17 @@ fn compute_scanned_vs_digital(documents: &[DocumentMetadata]) -> Option<ScannedV
     }
 
     if any {
-        Some(ScannedVsDigital { born_digital, scanned, mixed })
+        Some(ScannedVsDigital {
+            born_digital,
+            scanned,
+            mixed,
+        })
     } else {
         None
     }
 }
 
-fn compute_date_distribution(documents: &[DocumentMetadata]) -> Option<DateModifiedDistribution> {
+fn compute_date_distribution(documents: &[DocumentMetadata]) -> DateModifiedDistribution {
     let now = Utc::now();
     let mut last_30 = 0u64;
     let mut last_90 = 0u64;
@@ -106,10 +120,10 @@ fn compute_date_distribution(documents: &[DocumentMetadata]) -> Option<DateModif
         }
     }
 
-    Some(DateModifiedDistribution {
+    DateModifiedDistribution {
         last_30_days: last_30,
         last_90_days: last_90,
         last_365_days: last_365,
         older,
-    })
+    }
 }

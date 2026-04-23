@@ -10,7 +10,7 @@
 //!    b. Classify by extension → inspection depth + parser kind.
 //!    c. Dispatch to format-specific parser (if deep or medium).
 //!    d. Run analysis passes: version detection, department inference,
-//!       cross-reference extraction, language detection, jargon extraction.
+//!    cross-reference extraction, language detection, jargon extraction.
 //! 5. Aggregate per-document results into a corpus summary.
 //! 6. Assemble and serialize the final `ScanReport`.
 
@@ -26,7 +26,7 @@ use walkdir::WalkDir;
 use crate::analysis;
 use crate::classify::{self, InspectionDepth, ParserKind};
 use crate::config::ScanConfig;
-use crate::error::{ExtractionError, MuninnError};
+use crate::error::MuninnError;
 use crate::output::{ScanMetadata, ScanReport};
 use crate::parsers::common;
 use crate::parsers::FormatParser;
@@ -37,14 +37,28 @@ pub struct Scanner {
 }
 
 impl Scanner {
+    #[must_use]
     pub fn new(config: ScanConfig) -> Self {
         Self { config }
     }
 
     /// Execute the scan and produce a report.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`MuninnError`] if a scan root is missing, a glob pattern is
+    /// invalid, or a filesystem walk fails at the root.
+    ///
+    /// # Panics
+    ///
+    /// Panics only if building a fallback `rayon::ThreadPool` fails, which
+    /// would indicate a broken runtime environment.
     pub fn run(&self) -> crate::Result<ScanReport> {
         let start = Instant::now();
-        info!("Starting scan with {} root(s)", self.config.scan_roots.len());
+        info!(
+            "Starting scan with {} root(s)",
+            self.config.scan_roots.len()
+        );
 
         // ── 1. Validate scan roots ─────────────────────────────────────
         for root in &self.config.scan_roots {
@@ -121,10 +135,23 @@ impl Scanner {
         let scan_metadata = ScanMetadata {
             scanner_version: env!("CARGO_PKG_VERSION").to_string(),
             scan_timestamp: Utc::now(),
-            scan_roots: self.config.scan_roots.iter().map(|p| p.display().to_string()).collect(),
+            scan_roots: self
+                .config
+                .scan_roots
+                .iter()
+                .map(|p| p.display().to_string())
+                .collect(),
             scan_duration_seconds: start.elapsed().as_secs_f64(),
-            hostname: if self.config.include_hostname { get_hostname() } else { None },
-            os: if self.config.include_hostname { get_os() } else { None },
+            hostname: if self.config.include_hostname {
+                get_hostname()
+            } else {
+                None
+            },
+            os: if self.config.include_hostname {
+                Some(get_os())
+            } else {
+                None
+            },
         };
 
         Ok(ScanReport {
@@ -180,11 +207,8 @@ fn process_file(
         });
     }
 
-    doc.inferred_department = analysis::department::infer_department(
-        &doc.relative_path,
-        scan_root,
-        department_overrides,
-    );
+    doc.inferred_department =
+        analysis::department::infer_department(&doc.relative_path, scan_root, department_overrides);
 
     Some(doc)
 }
@@ -202,7 +226,9 @@ fn get_parser(kind: ParserKind) -> Option<Box<dyn FormatParser>> {
         ParserKind::Ole => Some(Box::new(crate::parsers::ole::OleParser)),
 
         ParserKind::Rtf => Some(Box::new(crate::parsers::rtf::RtfParser)),
-        ParserKind::OpenDocument => Some(Box::new(crate::parsers::opendocument::OpenDocumentParser)),
+        ParserKind::OpenDocument => {
+            Some(Box::new(crate::parsers::opendocument::OpenDocumentParser))
+        }
         ParserKind::PlainText => Some(Box::new(crate::parsers::plain_text::PlainTextParser)),
         ParserKind::Html => Some(Box::new(crate::parsers::html::HtmlParser)),
 
@@ -215,8 +241,11 @@ fn get_parser(kind: ParserKind) -> Option<Box<dyn FormatParser>> {
         ParserKind::ArchiveContainer => Some(Box::new(crate::parsers::archive::ArchiveParser)),
 
         // Formats without parsers yet
-        ParserKind::CadDxf | ParserKind::CadStep | ParserKind::CadIfc
-        | ParserKind::Ebook | ParserKind::Database => None,
+        ParserKind::CadDxf
+        | ParserKind::CadStep
+        | ParserKind::CadIfc
+        | ParserKind::Ebook
+        | ParserKind::Database => None,
 
         ParserKind::None => None,
 
@@ -230,6 +259,6 @@ fn get_hostname() -> Option<String> {
     hostname::get().ok().and_then(|h| h.into_string().ok())
 }
 
-fn get_os() -> Option<String> {
-    Some(format!("{} {}", std::env::consts::OS, std::env::consts::ARCH))
+fn get_os() -> String {
+    format!("{} {}", std::env::consts::OS, std::env::consts::ARCH)
 }

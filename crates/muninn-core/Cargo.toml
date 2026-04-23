@@ -5,6 +5,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
+publish = false
 
 [features]
 default = ["pdf", "ooxml", "ole", "email", "image-meta", "text-analysis"]
@@ -36,6 +37,7 @@ thiserror.workspace = true
 tracing.workspace = true
 chardetng.workspace = true
 encoding_rs.workspace = true
+hostname.workspace = true
 
 # Feature-gated
 lopdf = { workspace = true, optional = true }
@@ -55,3 +57,22 @@ serde_json.workspace = true
 
 [lints]
 workspace = true
+
+# Feature-gated parser deps are declared here but their modules are still
+# stubs (see CLAUDE.md "Known Defects"). cargo-machete cannot see past the
+# cfg gates, so we explicitly ignore them until the parser bodies land.
+[package.metadata.cargo-machete]
+ignored = [
+    "aho-corasick",
+    "cfb",
+    "chardetng",
+    "encoding_rs",
+    "imagesize",
+    "kamadak-exif",
+    "lopdf",
+    "mailparse",
+    "pdf-extract",
+    "quick-xml",
+    "whichlang",
+    "zip",
+]

@@ -4,13 +4,15 @@
 //! based on top-level directory names under the scan root.
 
 use std::collections::HashMap;
+use std::hash::BuildHasher;
 use std::path::Path;
 
 /// Infer department from a file's path relative to its scan root.
-pub fn infer_department(
+#[must_use]
+pub fn infer_department<S: BuildHasher>(
     relative_path: &str,
     scan_root: &Path,
-    overrides: &HashMap<String, String>,
+    overrides: &HashMap<String, String, S>,
 ) -> Option<String> {
     // Check explicit overrides first.
     for (pattern, department) in overrides {

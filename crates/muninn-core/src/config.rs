@@ -15,7 +15,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScanConfig {
     // ── Main GUI inputs ────────────────────────────────────────────────
-
     /// One or more folder paths to scan. The only mandatory input.
     pub scan_roots: Vec<PathBuf>,
 
@@ -29,7 +28,6 @@ pub struct ScanConfig {
     pub include_full_paths: bool,
 
     // ── Advanced panel ─────────────────────────────────────────────────
-
     /// Glob patterns for paths/extensions to skip. Merged with defaults.
     pub exclusion_patterns: Vec<String>,
 
@@ -47,14 +45,14 @@ pub struct ScanConfig {
     /// Key: glob-style directory pattern, Value: department name.
     pub department_overrides: HashMap<String, String>,
 
-    /// Number of parallel file-processing threads. Default: num_cpus - 1.
+    /// Number of parallel file-processing threads. Default: `num_cpus` - 1.
     pub concurrency: usize,
 }
 
 impl Default for ScanConfig {
     fn default() -> Self {
         let num_cpus = std::thread::available_parallelism()
-            .map(|n| n.get())
+            .map(std::num::NonZeroUsize::get)
             .unwrap_or(4);
 
         Self {

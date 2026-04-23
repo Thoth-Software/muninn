@@ -24,11 +24,11 @@ pub enum InspectionDepth {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ParserKind {
     Pdf,
-    Ooxml,       // docx, xlsx, pptx (and macro variants)
-    Ole,         // doc, xls, ppt, msg
+    Ooxml, // docx, xlsx, pptx (and macro variants)
+    Ole,   // doc, xls, ppt, msg
     Rtf,
     OpenDocument, // odt, ods, odp
-    PlainText,   // txt, md, csv, json, xml, yaml, etc.
+    PlainText,    // txt, md, csv, json, xml, yaml, etc.
     Html,
     Eml,
     ArchiveContainer, // zip, 7z, tar, etc.
@@ -54,6 +54,10 @@ pub struct FileClassification {
 /// Falls back to [`InspectionDepth::Shallow`] with [`ParserKind::None`] for
 /// unrecognized extensions. Magic-byte MIME detection happens later in the
 /// pipeline and can upgrade a shallow classification.
+#[must_use]
+#[allow(clippy::match_same_arms)]
+// reason = "Arms are intentionally grouped by format category for readability; merging them
+// would break the extension-registry structure used for review and future expansion."
 pub fn classify_by_extension(path: &Path) -> FileClassification {
     let ext = path
         .extension()
@@ -82,9 +86,8 @@ pub fn classify_by_extension(path: &Path) -> FileClassification {
         "odt" | "ods" | "odp" => deep(ParserKind::OpenDocument),
 
         // ── Deep: Plain text family ────────────────────────────────
-        "txt" | "text" | "log" | "md" | "markdown" | "rst" | "csv"
-        | "tsv" | "json" | "jsonl" | "xml" | "yaml" | "yml"
-        | "toml" | "ini" | "cfg" | "conf" => deep(ParserKind::PlainText),
+        "txt" | "text" | "log" | "md" | "markdown" | "rst" | "csv" | "tsv" | "json" | "jsonl"
+        | "xml" | "yaml" | "yml" | "toml" | "ini" | "cfg" | "conf" => deep(ParserKind::PlainText),
 
         // ── Deep: HTML ─────────────────────────────────────────────
         "html" | "htm" | "xhtml" | "mhtml" | "mht" => deep(ParserKind::Html),
@@ -111,8 +114,9 @@ pub fn classify_by_extension(path: &Path) -> FileClassification {
         "rvt" | "rfa" => medium(ParserKind::Ole), // Revit = OLE compound
 
         // ── Medium: Images (EXIF / dimensions) ─────────────────────
-        "png" | "jpg" | "jpeg" | "tiff" | "tif" | "bmp" | "gif"
-        | "webp" | "svg" | "ico" => medium(ParserKind::Image),
+        "png" | "jpg" | "jpeg" | "tiff" | "tif" | "bmp" | "gif" | "webp" | "svg" | "ico" => {
+            medium(ParserKind::Image)
+        }
 
         // ── Medium: Engineering images ─────────────────────────────
         "vsdx" => medium(ParserKind::Ooxml), // OOXML-like
@@ -126,18 +130,13 @@ pub fn classify_by_extension(path: &Path) -> FileClassification {
         "epub" | "mobi" => medium(ParserKind::Ebook),
 
         // ── Shallow: Audio ─────────────────────────────────────────
-        "mp3" | "wav" | "flac" | "aac" | "ogg" | "wma" | "m4a" => {
-            shallow()
-        }
+        "mp3" | "wav" | "flac" | "aac" | "ogg" | "wma" | "m4a" => shallow(),
 
         // ── Shallow: Video ─────────────────────────────────────────
-        "mp4" | "avi" | "mkv" | "mov" | "wmv" | "webm" | "flv" | "m4v" => {
-            shallow()
-        }
+        "mp4" | "avi" | "mkv" | "mov" | "wmv" | "webm" | "flv" | "m4v" => shallow(),
 
         // ── Shallow: Executables / Binaries ────────────────────────
-        "exe" | "dll" | "so" | "dylib" | "bin" | "com" | "msi"
-        | "dmg" | "app" => shallow(),
+        "exe" | "dll" | "so" | "dylib" | "bin" | "com" | "msi" | "dmg" | "app" => shallow(),
 
         // ── Shallow: Fonts ─────────────────────────────────────────
         "ttf" | "otf" | "woff" | "woff2" | "eot" => shallow(),
@@ -148,13 +147,22 @@ pub fn classify_by_extension(path: &Path) -> FileClassification {
 }
 
 fn deep(parser: ParserKind) -> FileClassification {
-    FileClassification { depth: InspectionDepth::Deep, parser }
+    FileClassification {
+        depth: InspectionDepth::Deep,
+        parser,
+    }
 }
 
 fn medium(parser: ParserKind) -> FileClassification {
-    FileClassification { depth: InspectionDepth::Medium, parser }
+    FileClassification {
+        depth: InspectionDepth::Medium,
+        parser,
+    }
 }
 
 fn shallow() -> FileClassification {
-    FileClassification { depth: InspectionDepth::Shallow, parser: ParserKind::None }
+    FileClassification {
+        depth: InspectionDepth::Shallow,
+        parser: ParserKind::None,
+    }
 }

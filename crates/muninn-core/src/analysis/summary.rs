@@ -12,6 +12,7 @@ use crate::output::{
 };
 
 /// Aggregate per-document metadata into a corpus summary.
+#[must_use]
 pub fn compute_summary(documents: &[DocumentMetadata]) -> CorpusSummary {
     let total_documents = documents.len() as u64;
     let total_size_bytes: u64 = documents.iter().map(|d| d.file_size_bytes).sum();
@@ -54,7 +55,7 @@ pub fn compute_summary(documents: &[DocumentMetadata]) -> CorpusSummary {
     let scanned_vs_digital = compute_scanned_vs_digital(documents);
 
     // Date modified distribution
-    let date_modified_distribution = compute_date_distribution(documents);
+    let date_modified_distribution = Some(compute_date_distribution(documents));
 
     CorpusSummary {
         total_documents,
@@ -97,7 +98,7 @@ fn compute_scanned_vs_digital(documents: &[DocumentMetadata]) -> Option<ScannedV
     }
 }
 
-fn compute_date_distribution(documents: &[DocumentMetadata]) -> Option<DateModifiedDistribution> {
+fn compute_date_distribution(documents: &[DocumentMetadata]) -> DateModifiedDistribution {
     let now = Utc::now();
     let mut last_30 = 0u64;
     let mut last_90 = 0u64;
@@ -119,10 +120,10 @@ fn compute_date_distribution(documents: &[DocumentMetadata]) -> Option<DateModif
         }
     }
 
-    Some(DateModifiedDistribution {
+    DateModifiedDistribution {
         last_30_days: last_30,
         last_90_days: last_90,
         last_365_days: last_365,
         older,
-    })
+    }
 }

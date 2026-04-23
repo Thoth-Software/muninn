@@ -29,7 +29,7 @@ struct Cli {
     #[arg(long, default_value_t = 5)]
     text_depth: usize,
 
-    /// Parallel processing threads. Default: num_cpus - 1.
+    /// Parallel processing threads. Default: `num_cpus` - 1.
     #[arg(short = 'j', long)]
     threads: Option<usize>,
 
@@ -69,18 +69,18 @@ fn run() -> Result<()> {
     let cli = Cli::parse();
 
     // Build ScanConfig from CLI args
-    let mut config = muninn_core::ScanConfig::default();
-    config.scan_roots = cli.scan_roots;
-    config.output_dir = cli.output.clone();
-    config.max_file_size_bytes = cli.max_file_size;
-    config.text_extraction_depth = cli.text_depth;
-    config.include_hostname = !cli.no_hostname;
-    config.include_full_paths = !cli.hash_filenames;
-    config.custom_xref_patterns = cli.xref_patterns;
-
-    if let Some(threads) = cli.threads {
-        config.concurrency = threads;
-    }
+    let defaults = muninn_core::ScanConfig::default();
+    let mut config = muninn_core::ScanConfig {
+        scan_roots: cli.scan_roots,
+        output_dir: cli.output.clone(),
+        max_file_size_bytes: cli.max_file_size,
+        text_extraction_depth: cli.text_depth,
+        include_hostname: !cli.no_hostname,
+        include_full_paths: !cli.hash_filenames,
+        custom_xref_patterns: cli.xref_patterns,
+        concurrency: cli.threads.unwrap_or(defaults.concurrency),
+        ..defaults
+    };
 
     config.exclusion_patterns.extend(cli.extra_exclusions);
 

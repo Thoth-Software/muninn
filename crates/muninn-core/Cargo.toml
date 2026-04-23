@@ -36,6 +36,7 @@ thiserror.workspace = true
 tracing.workspace = true
 chardetng.workspace = true
 encoding_rs.workspace = true
+hostname.workspace = true
 
 # Feature-gated
 lopdf = { workspace = true, optional = true }

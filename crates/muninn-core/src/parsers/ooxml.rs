@@ -18,7 +18,7 @@ impl FormatParser for OoxmlParser {
         doc: &mut DocumentMetadata,
         text_extraction_depth: usize,
     ) -> Vec<ExtractionError> {
-        let mut errors = Vec::new();
+        let errors = Vec::new();
 
         // TODO: Open with zip::ZipArchive
         // TODO: Parse docProps/core.xml with quick-xml:

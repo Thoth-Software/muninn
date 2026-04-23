@@ -1,6 +1,6 @@
 //! PDF parser — deep inspection.
 //!
-//! Extracts: internal metadata (Author, CreationDate, ModDate, Producer, etc.),
+//! Extracts: internal metadata (Author, `CreationDate`, `ModDate`, Producer, etc.),
 //! page count, embedded image count, form field detection, text extractability
 //! classification (born-digital / scanned / mixed), text for language detection
 //! and cross-reference extraction.
@@ -20,7 +20,7 @@ impl FormatParser for PdfParser {
         doc: &mut DocumentMetadata,
         text_extraction_depth: usize,
     ) -> Vec<ExtractionError> {
-        let mut errors = Vec::new();
+        let errors = Vec::new();
 
         // TODO: Open with lopdf::Document::load(path)
         // TODO: Extract /Info dictionary → author, title, subject, keywords, producer, creator

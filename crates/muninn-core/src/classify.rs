@@ -54,6 +54,10 @@ pub struct FileClassification {
 /// Falls back to [`InspectionDepth::Shallow`] with [`ParserKind::None`] for
 /// unrecognized extensions. Magic-byte MIME detection happens later in the
 /// pipeline and can upgrade a shallow classification.
+#[must_use]
+#[allow(clippy::match_same_arms)]
+// reason = "Arms are intentionally grouped by format category for readability; merging them
+// would break the extension-registry structure used for review and future expansion."
 pub fn classify_by_extension(path: &Path) -> FileClassification {
     let ext = path
         .extension()

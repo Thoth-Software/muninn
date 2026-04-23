@@ -53,6 +53,9 @@ imagesize = "0.13"
 # Email
 mailparse = "0.15"
 
+# System
+hostname = "0.4"
+
 # Concurrency
 rayon = "1"
 

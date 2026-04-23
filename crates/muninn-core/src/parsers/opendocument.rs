@@ -1,4 +1,4 @@
-//! OpenDocument parser — .odt, .ods, .odp. Unzip + parse meta.xml.
+//! `OpenDocument` parser — .odt, .ods, .odp. Unzip + parse meta.xml.
 
 use crate::error::ExtractionError;
 use crate::output::DocumentMetadata;

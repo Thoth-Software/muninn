@@ -14,6 +14,11 @@ use crate::output::DocumentMetadata;
 /// Populate the filesystem-level fields of a [`DocumentMetadata`].
 ///
 /// This runs for *every* file regardless of inspection depth.
+///
+/// # Errors
+///
+/// Returns an error if `fs::metadata` fails on `path` (permission denied,
+/// path does not exist, etc.).
 pub fn extract_filesystem_metadata(path: &Path) -> Result<DocumentMetadata> {
     let metadata = fs::metadata(path)?;
     let file_size_bytes = metadata.len();
@@ -26,10 +31,10 @@ pub fn extract_filesystem_metadata(path: &Path) -> Result<DocumentMetadata> {
 
     let mime_type = detect_mime(path);
 
-    let fs_created = filetime::FileTime::from_creation_time(&metadata)
-        .map(|ft| DateTime::<Utc>::from(ft.to_system_time()));
-    let fs_modified = filetime::FileTime::from_last_modification_time(&metadata);
-    let fs_modified_dt = DateTime::<Utc>::from(fs_modified.to_system_time());
+    let fs_created =
+        filetime::FileTime::from_creation_time(&metadata).and_then(filetime_to_datetime);
+    let fs_modified_dt =
+        filetime_to_datetime(filetime::FileTime::from_last_modification_time(&metadata));
 
     Ok(DocumentMetadata {
         relative_path: String::new(), // filled in by scanner after hashing decision
@@ -39,7 +44,7 @@ pub fn extract_filesystem_metadata(path: &Path) -> Result<DocumentMetadata> {
         mime_type,
         dates: crate::output::DateInfo {
             filesystem_created: fs_created,
-            filesystem_modified: Some(fs_modified_dt),
+            filesystem_modified: fs_modified_dt,
             document_created: None,
             document_modified: None,
         },
@@ -56,6 +61,10 @@ pub fn extract_filesystem_metadata(path: &Path) -> Result<DocumentMetadata> {
         domain_terms: None,
         errors: None,
     })
+}
+
+fn filetime_to_datetime(ft: filetime::FileTime) -> Option<DateTime<Utc>> {
+    DateTime::<Utc>::from_timestamp(ft.unix_seconds(), ft.nanoseconds())
 }
 
 /// Two-pass MIME detection: magic bytes first (via `infer`), extension fallback.

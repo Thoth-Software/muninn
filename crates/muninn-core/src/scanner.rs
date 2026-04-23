@@ -10,7 +10,7 @@
 //!    b. Classify by extension → inspection depth + parser kind.
 //!    c. Dispatch to format-specific parser (if deep or medium).
 //!    d. Run analysis passes: version detection, department inference,
-//!       cross-reference extraction, language detection, jargon extraction.
+//!    cross-reference extraction, language detection, jargon extraction.
 //! 5. Aggregate per-document results into a corpus summary.
 //! 6. Assemble and serialize the final `ScanReport`.
 
@@ -26,7 +26,7 @@ use walkdir::WalkDir;
 use crate::analysis;
 use crate::classify::{self, InspectionDepth, ParserKind};
 use crate::config::ScanConfig;
-use crate::error::{ExtractionError, MuninnError};
+use crate::error::MuninnError;
 use crate::output::{ScanMetadata, ScanReport};
 use crate::parsers::common;
 use crate::parsers::FormatParser;
@@ -37,11 +37,22 @@ pub struct Scanner {
 }
 
 impl Scanner {
+    #[must_use]
     pub fn new(config: ScanConfig) -> Self {
         Self { config }
     }
 
     /// Execute the scan and produce a report.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`MuninnError`] if a scan root is missing, a glob pattern is
+    /// invalid, or a filesystem walk fails at the root.
+    ///
+    /// # Panics
+    ///
+    /// Panics only if building a fallback `rayon::ThreadPool` fails, which
+    /// would indicate a broken runtime environment.
     pub fn run(&self) -> crate::Result<ScanReport> {
         let start = Instant::now();
         info!(
@@ -137,7 +148,7 @@ impl Scanner {
                 None
             },
             os: if self.config.include_hostname {
-                get_os()
+                Some(get_os())
             } else {
                 None
             },
@@ -248,10 +259,6 @@ fn get_hostname() -> Option<String> {
     hostname::get().ok().and_then(|h| h.into_string().ok())
 }
 
-fn get_os() -> Option<String> {
-    Some(format!(
-        "{} {}",
-        std::env::consts::OS,
-        std::env::consts::ARCH
-    ))
+fn get_os() -> String {
+    format!("{} {}", std::env::consts::OS, std::env::consts::ARCH)
 }

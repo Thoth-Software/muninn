@@ -145,7 +145,6 @@ Functions taking `&Vec<T>` or `&String` are a lint failure; use `&[T]` and `&str
 
 If your task touches any of these, flag it to the user rather than silently resolving or ignoring it.
 
-- **`hostname` crate missing** — `scanner.rs` calls `hostname::get()` but the dependency is not in `Cargo.toml`. Won't compile until added.
 - **`dirs` crate missing** — `config.rs` falls back to `cwd` instead of Desktop. TODO comment in code.
 - **HTML parser crate missing** — no HTML parsing dependency exists. `html.rs` can't do anything without one.
 - **RTF parser crate missing** — same situation as HTML.

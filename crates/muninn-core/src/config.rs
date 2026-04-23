@@ -15,7 +15,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScanConfig {
     // ── Main GUI inputs ────────────────────────────────────────────────
-
     /// One or more folder paths to scan. The only mandatory input.
     pub scan_roots: Vec<PathBuf>,
 
@@ -29,7 +28,6 @@ pub struct ScanConfig {
     pub include_full_paths: bool,
 
     // ── Advanced panel ─────────────────────────────────────────────────
-
     /// Glob patterns for paths/extensions to skip. Merged with defaults.
     pub exclusion_patterns: Vec<String>,
 

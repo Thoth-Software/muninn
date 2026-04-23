@@ -68,7 +68,5 @@ fn detect_mime(path: &Path) -> Option<String> {
     }
 
     // Fall back to extension-based guess.
-    mime_guess::from_path(path)
-        .first()
-        .map(|m| m.to_string())
+    mime_guess::from_path(path).first().map(|m| m.to_string())
 }

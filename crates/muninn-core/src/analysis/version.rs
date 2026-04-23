@@ -42,5 +42,8 @@ pub fn detect_version(filename_stem: &str) -> VersionDetection {
         }
     }
 
-    VersionDetection { filename_version: None, version_family: None }
+    VersionDetection {
+        filename_version: None,
+        version_family: None,
+    }
 }

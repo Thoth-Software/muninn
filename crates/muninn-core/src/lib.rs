@@ -18,13 +18,13 @@
 //! The [`Scanner`] is the top-level entry point. Give it a [`ScanConfig`] and
 //! call [`Scanner::run`] to get a [`ScanReport`].
 
+pub mod analysis;
+pub mod classify;
 pub mod config;
 pub mod error;
-pub mod scanner;
-pub mod classify;
-pub mod parsers;
-pub mod analysis;
 pub mod output;
+pub mod parsers;
+pub mod scanner;
 
 // ── Public API re-exports ──────────────────────────────────────────────────
 

@@ -89,7 +89,11 @@ fn run() -> Result<()> {
     let report = scanner.run().context("Scan failed")?;
 
     // Write report
-    let hostname = report.scan_metadata.hostname.as_deref().unwrap_or("unknown");
+    let hostname = report
+        .scan_metadata
+        .hostname
+        .as_deref()
+        .unwrap_or("unknown");
     let date = chrono::Utc::now().format("%Y%m%d");
     let filename = format!("muninn-report-{hostname}-{date}.json");
     let output_path = cli.output.join(&filename);
@@ -99,7 +103,10 @@ fn run() -> Result<()> {
         .with_context(|| format!("Failed to write report to {}", output_path.display()))?;
 
     info!("Report written to {}", output_path.display());
-    println!("✓ Scan complete: {} documents processed", report.corpus_summary.total_documents);
+    println!(
+        "✓ Scan complete: {} documents processed",
+        report.corpus_summary.total_documents
+    );
     println!("  Report: {}", output_path.display());
 
     Ok(())

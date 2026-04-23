@@ -36,7 +36,9 @@ impl XrefExtractor {
         all_patterns.extend(custom_strs);
 
         let patterns = RegexSet::new(&all_patterns)?;
-        Ok(Self { _patterns: patterns })
+        Ok(Self {
+            _patterns: patterns,
+        })
     }
 
     /// Extract cross-references from a block of text.

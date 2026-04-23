@@ -44,7 +44,10 @@ impl Scanner {
     /// Execute the scan and produce a report.
     pub fn run(&self) -> crate::Result<ScanReport> {
         let start = Instant::now();
-        info!("Starting scan with {} root(s)", self.config.scan_roots.len());
+        info!(
+            "Starting scan with {} root(s)",
+            self.config.scan_roots.len()
+        );
 
         // ── 1. Validate scan roots ─────────────────────────────────────
         for root in &self.config.scan_roots {
@@ -121,10 +124,23 @@ impl Scanner {
         let scan_metadata = ScanMetadata {
             scanner_version: env!("CARGO_PKG_VERSION").to_string(),
             scan_timestamp: Utc::now(),
-            scan_roots: self.config.scan_roots.iter().map(|p| p.display().to_string()).collect(),
+            scan_roots: self
+                .config
+                .scan_roots
+                .iter()
+                .map(|p| p.display().to_string())
+                .collect(),
             scan_duration_seconds: start.elapsed().as_secs_f64(),
-            hostname: if self.config.include_hostname { get_hostname() } else { None },
-            os: if self.config.include_hostname { get_os() } else { None },
+            hostname: if self.config.include_hostname {
+                get_hostname()
+            } else {
+                None
+            },
+            os: if self.config.include_hostname {
+                get_os()
+            } else {
+                None
+            },
         };
 
         Ok(ScanReport {
@@ -180,11 +196,8 @@ fn process_file(
         });
     }
 
-    doc.inferred_department = analysis::department::infer_department(
-        &doc.relative_path,
-        scan_root,
-        department_overrides,
-    );
+    doc.inferred_department =
+        analysis::department::infer_department(&doc.relative_path, scan_root, department_overrides);
 
     Some(doc)
 }
@@ -202,7 +215,9 @@ fn get_parser(kind: ParserKind) -> Option<Box<dyn FormatParser>> {
         ParserKind::Ole => Some(Box::new(crate::parsers::ole::OleParser)),
 
         ParserKind::Rtf => Some(Box::new(crate::parsers::rtf::RtfParser)),
-        ParserKind::OpenDocument => Some(Box::new(crate::parsers::opendocument::OpenDocumentParser)),
+        ParserKind::OpenDocument => {
+            Some(Box::new(crate::parsers::opendocument::OpenDocumentParser))
+        }
         ParserKind::PlainText => Some(Box::new(crate::parsers::plain_text::PlainTextParser)),
         ParserKind::Html => Some(Box::new(crate::parsers::html::HtmlParser)),
 
@@ -215,8 +230,11 @@ fn get_parser(kind: ParserKind) -> Option<Box<dyn FormatParser>> {
         ParserKind::ArchiveContainer => Some(Box::new(crate::parsers::archive::ArchiveParser)),
 
         // Formats without parsers yet
-        ParserKind::CadDxf | ParserKind::CadStep | ParserKind::CadIfc
-        | ParserKind::Ebook | ParserKind::Database => None,
+        ParserKind::CadDxf
+        | ParserKind::CadStep
+        | ParserKind::CadIfc
+        | ParserKind::Ebook
+        | ParserKind::Database => None,
 
         ParserKind::None => None,
 
@@ -231,5 +249,9 @@ fn get_hostname() -> Option<String> {
 }
 
 fn get_os() -> Option<String> {
-    Some(format!("{} {}", std::env::consts::OS, std::env::consts::ARCH))
+    Some(format!(
+        "{} {}",
+        std::env::consts::OS,
+        std::env::consts::ARCH
+    ))
 }

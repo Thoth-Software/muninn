@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -e
+
+echo "pre-push: running quality gates..."
+echo ""
+
+echo "── fmt ──"
+cargo fmt --all --check || { echo "❌ Format check failed. Run 'cargo fmt --all'."; exit 1; }
+echo "✓ Formatting OK"
+echo ""
+
+echo "── clippy ──"
+cargo clippy --workspace --all-targets --all-features -- -D warnings || { echo "❌ Clippy failed."; exit 1; }
+echo "✓ Clippy OK"
+echo ""
+
+echo "── test ──"
+cargo test --workspace --all-targets --all-features || { echo "❌ Tests failed."; exit 1; }
+echo "✓ Tests OK"
+echo ""
+
+echo "✓ All quality gates passed."

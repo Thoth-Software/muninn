@@ -243,6 +243,12 @@ These are the source-of-truth design documents. When code and spec disagree, the
 
 ---
 
+## Development Setup
+
+After cloning the repo, run `bash scripts/setup-hooks.sh` to point Git at the project's hook scripts in `.githooks/`. The **pre-commit** hook runs `cargo fmt --all --check` and rejects commits with formatting violations. The **pre-push** hook runs the full quality-gate sequence — fmt, clippy, and tests — so broken code never reaches the remote. In an emergency you can bypass hooks with `--no-verify`, but CI will still catch failures.
+
+---
+
 ## Static Analysis
 
 | Tool | Purpose | Install |

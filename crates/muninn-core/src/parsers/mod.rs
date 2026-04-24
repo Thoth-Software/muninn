@@ -1,7 +1,7 @@
 //! Format-specific parsers.
 //!
 //! Each parser implements the [`FormatParser`] trait, which takes a file path
-//! and returns a [`ParseResult`] containing whatever metadata that format can
+//! and returns extraction errors along with whatever metadata that format can
 //! yield. The scanner dispatches to the correct parser based on the
 //! [`crate::classify::FileClassification`].
 //!

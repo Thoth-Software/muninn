@@ -1,4 +1,4 @@
-//! HTML parser — extract <meta> tags, <title>, structural counts.
+//! HTML parser — extract `<meta>` tags, `<title>`, structural counts.
 
 use crate::error::ExtractionError;
 use crate::output::DocumentMetadata;

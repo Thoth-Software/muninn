@@ -25,7 +25,7 @@ Run `make all` before presenting changes. It runs every hard gate in order and f
 make all   # fmt-check → lint → test → deny → machete
 ```
 
-The individual targets are also available (`make fmt-check`, `make lint`, `make test`, `make deny`, `make machete`, `make audit`). For a quick local check when iterating, `make check` runs `cargo check --workspace --all-targets --all-features` to catch type errors without a full build. The pre-push git hook enforces fmt, clippy, and tests automatically, so passing `make all` locally means the push will succeed.
+The individual targets are also available (`make fmt-check`, `make lint`, `make test`, `make deny`, `make machete`, `make audit`). For a quick local check when iterating, `make check` runs `cargo check --workspace --all-targets --all-features` to catch type errors without a full build. The pre-push git hook enforces fmt, clippy, and tests automatically, so passing `make all` locally means the push will succeed. CI enforces stricter gates than the local hooks — it additionally runs `cargo deny`, `cargo machete`, `cargo doc --no-deps` (with `-Dwarnings`), and minimal-features compilation checks.
 
 ---
 

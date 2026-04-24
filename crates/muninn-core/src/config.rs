@@ -51,9 +51,7 @@ pub struct ScanConfig {
 
 impl Default for ScanConfig {
     fn default() -> Self {
-        let num_cpus = std::thread::available_parallelism()
-            .map(std::num::NonZeroUsize::get)
-            .unwrap_or(4);
+        let num_cpus = std::thread::available_parallelism().map_or(4, std::num::NonZeroUsize::get);
 
         Self {
             scan_roots: Vec::new(),

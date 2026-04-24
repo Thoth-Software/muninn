@@ -249,6 +249,12 @@ After cloning the repo, run `bash scripts/setup-hooks.sh` to point Git at the pr
 
 ---
 
+## CI
+
+GitHub Actions runs on every push to `master` and every PR targeting it. The workflow enforces a superset of the local hooks: format → lint → test (sequential, fail-fast), plus deny, machete, doc, and minimal-features checks in parallel. All jobs must pass before a PR can merge. Branch protection on `master` requires passing CI status checks and at least one approval.
+
+---
+
 ## Static Analysis
 
 | Tool | Purpose | Install |

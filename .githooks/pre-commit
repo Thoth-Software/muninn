@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e
+
+echo "pre-commit: checking formatting..."
+cargo fmt --all --check
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ Formatting check failed. Run 'cargo fmt --all' and re-commit."
+    exit 1
+fi
+echo "✓ Formatting OK"

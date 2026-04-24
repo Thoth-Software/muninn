@@ -56,6 +56,11 @@ tempfile.workspace = true
 serde_json.workspace = true
 proptest.workspace = true
 insta = { workspace = true, features = ["json"] }
+criterion.workspace = true
+
+[[bench]]
+name = "classify"
+harness = false
 
 [lints]
 workspace = true

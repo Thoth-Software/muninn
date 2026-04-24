@@ -1,0 +1,35 @@
+---
+source: crates/muninn-core/tests/output_snapshot.rs
+expression: value
+---
+{
+  "corpus_summary": {
+    "format_distribution": {
+      "txt": 1
+    },
+    "total_documents": 1,
+    "total_size_bytes": 1024
+  },
+  "documents": [
+    {
+      "dates": {
+        "filesystem_created": "2026-01-15T12:00:00Z",
+        "filesystem_modified": "2026-01-15T12:00:00Z"
+      },
+      "extension": "txt",
+      "file_size_bytes": 1024,
+      "relative_path": "notes.txt",
+      "scan_root": "test/root"
+    }
+  ],
+  "scan_metadata": {
+    "hostname": "test-host",
+    "os": "test-os",
+    "scan_duration_seconds": 1.5,
+    "scan_roots": [
+      "test/root"
+    ],
+    "scan_timestamp": "2026-01-15T12:00:00Z",
+    "scanner_version": "0.1.0"
+  }
+}

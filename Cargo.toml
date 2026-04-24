@@ -75,6 +75,7 @@ tempfile = "3"
 assert_cmd = "2"
 predicates = "3"
 proptest = "1"
+insta = "1"
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }

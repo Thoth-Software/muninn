@@ -166,3 +166,20 @@ fn shallow() -> FileClassification {
         parser: ParserKind::None,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::path::PathBuf;
+
+    use proptest::prelude::*;
+
+    use super::classify_by_extension;
+
+    proptest! {
+        #[test]
+        fn classify_by_extension_never_panics(ext in "[a-z]{1,10}") {
+            let path = PathBuf::from(format!("test_file.{ext}"));
+            let _ = classify_by_extension(&path);
+        }
+    }
+}

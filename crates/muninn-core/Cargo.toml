@@ -54,6 +54,7 @@ whichlang = { workspace = true, optional = true }
 [dev-dependencies]
 tempfile.workspace = true
 serde_json.workspace = true
+proptest.workspace = true
 
 [lints]
 workspace = true
